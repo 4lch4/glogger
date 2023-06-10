@@ -37,9 +37,13 @@ func (l *Logger) getCtx(ctx string) string {
 	}
 }
 
-// Gets the log level as a string.
-func (l *Logger) getLogLevel() string {
-	switch l.LogLevel {
+// Converts the log level from an int to a string.
+func (l *Logger) logLevelToStr(logLevel *int) string {
+	if logLevel == nil {
+		logLevel = &l.LogLevel
+	}
+
+	switch *logLevel {
 	case 0:
 		return "DEBUG"
 	case 1:
