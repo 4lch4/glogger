@@ -21,8 +21,6 @@ tasks:
     desc: Push any git changes and tags to the remote repository.
     aliases:
       - gp
-    deps:
-      - build
     cmds:
       - git push
       - git push --tags
