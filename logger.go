@@ -6,8 +6,9 @@ import (
 	"github.com/logrusorgru/aurora/v4"
 )
 
+// This struct represents an instance of the logger.
 type Logger struct {
-	// 0 = Debug / 1 = Info / 2 = Warn / 3 = Error / 4 = Fatal / 5 = Panic
+	// 0 = DEBUG; 1 = INFO; 2 = WARN; 3 = ERROR; 4 = FATAL
 	LogLevel int
 
 	// The name of the application using the logger.
