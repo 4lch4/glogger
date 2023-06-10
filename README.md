@@ -8,29 +8,39 @@ Glogger is my (@4lch4) first attempt at a Go library/module. It's a simple loggi
 package main
 
 import (
-    "github.com/4lch4/Glogger"
+    "github.com/4lch4/glogger"
 )
 
 func main() {
+    // Set the application name.
+    appName := "AppName"
+
+    // Set the log level to 0 (DEBUG).
+    logLevel := 0
+
     // Create a new logger
-    logger := glogger.NewLogger()
+    logger := glogger.NewLogger(&glogger.NewLoggerInput{
+        AppName:  &appName,
+        LogLevel: &logLevel,
+    })
 
-    // Set the log level
-    logger.SetLevel(glogger.DEBUG)
 
-    // Log a message
-    logger.Log(glogger.DEBUG, "This is a debug message")
+    // Log a debug message.
+    logger.Debug("This is a debug message.", "main")
 
-    // Log a message with a format
-    logger.Logf(glogger.INFO, "This is a %s message", "info")
+    // Log an info message.
+    logger.Info("This is an info message.", "main")
 
-    // Log a message with a format and a variable number of arguments
-    logger.Logvf(glogger.WARN, "This is a %s message with %d arguments", "warning", 2, "foo", "bar")
+    // Log a warning message.
+    logger.Warn("This is a warning message.", "main")
 
-    // Log a message with a format and a slice of arguments
-    logger.Logvsf(glogger.ERROR, "This is a %s message with %d arguments", "error", 2, []interface{}{"foo", "bar"})
+    // Log an error message.
+    logger.Error("This is an error message.", "main")
 
-    // Log a message with a format and a map of arguments
-    logger.Logvmf(glogger.FATAL, "This is a %s message with %d arguments", "fatal", 2, map[string]interface{}{"foo": "bar", "baz": "qux"})
+    // Log a fatal message.
+    logger.Fatal("This is a fatal message.", "main")
+
+    // Log a panic message.
+    logger.Panic("This is a panic message.", "main")
 }
 ```

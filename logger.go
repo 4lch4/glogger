@@ -74,7 +74,7 @@ func (l *Logger) getLogLevel() string {
 }
 
 func (l *Logger) getLogPrefix(ctx string) string {
-	return "[" + l.AppName + "-" + l.getLogLevel() + "#" + " " + getCtx(ctx) + "]: "
+	return "[" + l.AppName + "-" + l.getLogLevel() + "#" + getCtx(ctx) + "]: "
 }
 
 func (l *Logger) Debug(msg string, ctx string) {
