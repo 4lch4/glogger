@@ -1,0 +1,37 @@
+version: 3
+
+tasks:
+  pretty:
+    desc: Uses the go fmt tool to format the codebase.
+    aliases:
+      - p
+      - format
+      - fmt
+    cmds:
+      - go fmt ./...
+
+  clean:
+    desc: Deletes the build output directory, any installed dependencies, and any generated files.
+    aliases:
+      - c
+    cmds:
+      - rm -rf go.sum
+
+  push:
+    desc: Push any git changes and tags to the remote repository.
+    aliases:
+      - gp
+    deps:
+      - build
+    cmds:
+      - git push
+      - git push --tags
+
+  tidy:
+    desc: Adds missing and removes unused modules.
+    aliases:
+      - t
+    cmds:
+      - go mod tidy
+      - git add go.mod go.sum
+      - "git commit -m 'chore: executed go mod tidy'"
