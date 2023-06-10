@@ -4,7 +4,7 @@ Glogger is my (@4lch4) first attempt at a Go library/module. It's a simple loggi
 
 ## Usage
 
-<!-- ```go
+```go
 package main
 
 import (
@@ -33,4 +33,4 @@ func main() {
     // Log a message with a format and a map of arguments
     logger.Logvmf(glogger.FATAL, "This is a %s message with %d arguments", "fatal", 2, map[string]interface{}{"foo": "bar", "baz": "qux"})
 }
-``` -->
+```
