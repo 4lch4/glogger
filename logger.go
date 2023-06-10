@@ -22,14 +22,22 @@ func getCtx(ctx string) string {
 	}
 }
 
+type NewLoggerInput struct {
+	AppName  *string
+	LogLevel *int
+}
+
 // Creates a new instance of the Logger struct. Parameters:
 //
 // - appName: The name of the application using the logger. If nil, the default value is "Glogger".
 //
 // - logLevel: 0 = Debug / 1 = Info / 2 = Warn / 3 = Error / 4 = Fatal / 5 = Panic. If nil, the default value is 0.
-func NewLogger(appName *string, logLevel *int) *Logger {
+func NewLogger(loggerInput *NewLoggerInput) *Logger {
 	defaultAppName := "Glogger"
 	defaultLogLevel := 0
+
+	var logLevel *int = loggerInput.LogLevel
+	var appName *string = loggerInput.AppName
 
 	if logLevel == nil {
 		logLevel = &defaultLogLevel
@@ -59,13 +67,14 @@ func (l *Logger) getLogLevel() string {
 		return "FATAL"
 	case 5:
 		return "PANIC"
-	}
 
-	return "UNKNOWN"
+	default:
+		return "DEBUG"
+	}
 }
 
 func (l *Logger) getLogPrefix(ctx string) string {
-	return "[" + l.AppName + "-" + l.getLogLevel() + "]" + "[" + getCtx(ctx) + "]: "
+	return "[" + l.AppName + "-" + l.getLogLevel() + "#" + " " + getCtx(ctx) + "]: "
 }
 
 func (l *Logger) Debug(msg string, ctx string) {
