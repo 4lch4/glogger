@@ -61,8 +61,8 @@ func (l *Logger) logLevelToStr(logLevel *int) string {
 }
 
 // Gets the log prefix for the log message.
-func (l *Logger) getLogPrefix(ctx string) string {
-	return "[" + l.AppName + "-" + l.getLogLevel() + "#" + l.getCtx(ctx) + "]: "
+func (l *Logger) getLogPrefix(logLevel *int, ctx string) string {
+	return "[" + l.AppName + "-" + l.logLevelToStr(logLevel) + "#" + l.getCtx(ctx) + "]: "
 }
 
 // Creates a new instance of the Logger struct. Parameters:
@@ -92,7 +92,7 @@ func NewLogger(loggerInput *NewLoggerInput) *Logger {
 // output bright blue.
 func (l *Logger) Debug(msg string, ctx string) {
 	if l.LogLevel == 0 {
-		logPrefix := l.getLogPrefix(ctx)
+		logPrefix := l.getLogPrefix(&l.LogLevel, ctx)
 		fmt.Println(aurora.BrightBlue(logPrefix + msg))
 	}
 }
@@ -109,7 +109,8 @@ func (l *Logger) Debugf(format string, input ...interface{}) {
 // output cyan.
 func (l *Logger) Info(msg string, ctx string) {
 	if l.LogLevel <= 1 {
-		logPrefix := l.getLogPrefix(ctx)
+		logLevel := 1
+		logPrefix := l.getLogPrefix(&logLevel, ctx)
 		fmt.Println(aurora.Cyan(logPrefix + "" + msg))
 	}
 }
@@ -126,7 +127,8 @@ func (l *Logger) Infof(format string, input ...interface{}) {
 // output bright yellow.
 func (l *Logger) Warn(msg string, ctx string) {
 	if l.LogLevel <= 2 {
-		logPrefix := l.getLogPrefix(ctx)
+		logLevel := 2
+		logPrefix := l.getLogPrefix(&logLevel, ctx)
 		fmt.Println(aurora.BrightYellow(logPrefix + msg))
 	}
 }
@@ -143,7 +145,8 @@ func (l *Logger) Warnf(format string, input ...interface{}) {
 // output bright red.
 func (l *Logger) Error(msg string, ctx string) {
 	if l.LogLevel <= 3 {
-		logPrefix := l.getLogPrefix(ctx)
+		logLevel := 3
+		logPrefix := l.getLogPrefix(&logLevel, ctx)
 		fmt.Println(aurora.BrightRed(logPrefix + msg))
 	}
 }
@@ -160,7 +163,8 @@ func (l *Logger) Errorf(format string, input ...interface{}) {
 // output bright red.
 func (l *Logger) Fatal(msg string, ctx string) {
 	if l.LogLevel <= 4 {
-		logPrefix := l.getLogPrefix(ctx)
+		logLevel := 4
+		logPrefix := l.getLogPrefix(&logLevel, ctx)
 		fmt.Println(aurora.BrightRed(logPrefix + msg))
 	}
 }
@@ -173,10 +177,9 @@ func (l *Logger) Fatalf(format string, input ...interface{}) {
 	fmt.Printf(format, aurora.BrightRed(msg))
 }
 
-// Outputs a message to the console using the SUCCESS log level, fmt.Println, and coloring the
-// output bright green.
+// Outputs a message to the console using fmt.Println, and coloring the output bright green.
 func (l *Logger) Success(msg string, ctx string) {
-	logPrefix := l.getLogPrefix(ctx)
+	logPrefix := "[" + l.AppName + "-SUCCESS#" + l.getCtx(ctx) + "]: "
 	fmt.Println(aurora.BrightGreen(logPrefix + msg))
 }
 
