@@ -21,40 +21,69 @@ type Logger struct {
 	LogLevel int
 }
 
-func NewLogger() *Logger {
-	return &Logger{}
+func getCtx(ctx string) string {
+	if ctx == "" {
+		return "Glogger"
+	} else {
+		return ctx
+	}
 }
 
-func (l *Logger) Debug(msg string) {
+func getLogPrefix(logLevel string, ctx string) string {
+	return "[" + logLevel + "]" + "[" + getCtx(ctx) + "]: "
+}
+
+func NewLogger(logLevel *int) *Logger {
+	defaultLogLevel := 0
+
+	if logLevel == nil {
+		logLevel = &defaultLogLevel
+	}
+
+	fmt.Println("logLevel: ", *logLevel)
+
+	return &Logger{
+		LogLevel: *logLevel,
+	}
+}
+
+func (l *Logger) Debug(msg string, ctx string) {
 	if l.LogLevel == 0 {
-		fmt.Println(aurora.BrightBlack(msg))
+		logPrefix := getLogPrefix("DEBUG", ctx)
+		fmt.Println(aurora.BrightBlue(logPrefix + msg))
 	}
 }
 
-func (l *Logger) Info(msg string) {
+func (l *Logger) Info(msg string, ctx string) {
 	if l.LogLevel <= 1 {
-		fmt.Println(aurora.Yellow(msg))
+		logPrefix := getLogPrefix("INFO", ctx)
+		fmt.Println(aurora.Yellow(logPrefix + "" + msg))
 	}
 }
 
-func (l *Logger) Warn(msg string) {
+func (l *Logger) Warn(msg string, ctx string) {
 	if l.LogLevel <= 2 {
-		fmt.Println(aurora.BrightYellow(msg))
+		logPrefix := getLogPrefix("WARN", ctx)
+		fmt.Println(aurora.BrightYellow(logPrefix + msg))
 	}
 }
 
-func (l *Logger) Error(msg string) {
+func (l *Logger) Error(msg string, ctx string) {
+
 	if l.LogLevel <= 3 {
-		fmt.Println(aurora.BrightRed(msg))
+		logPrefix := getLogPrefix("ERROR", ctx)
+		fmt.Println(aurora.BrightRed(logPrefix + msg))
 	}
 }
 
-func (l *Logger) Fatal(msg string) {
+func (l *Logger) Fatal(msg string, ctx string) {
 	if l.LogLevel <= 4 {
-		fmt.Println(aurora.BrightRed(msg))
+		logPrefix := getLogPrefix("FATAL", ctx)
+		fmt.Println(aurora.BrightRed(logPrefix + msg))
 	}
 }
 
-func (l *Logger) Success(msg string) {
-	fmt.Println(aurora.BrightGreen(msg))
+func (l *Logger) Success(msg string, ctx string) {
+	logPrefix := getLogPrefix("SUCCESS", ctx)
+	fmt.Println(aurora.BrightGreen(logPrefix + msg))
 }
