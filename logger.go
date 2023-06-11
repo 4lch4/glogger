@@ -125,6 +125,8 @@ func (l *Logger) ConvertLogLevel(level interface{}) string {
 	return LogLevels[fmt.Sprintf("%d", l.LogLevel)]
 }
 
+// #region Debug
+
 // Outputs a message to the console using the DEBUG log level, fmt.Println, and coloring the
 // output bright blue.
 func (l *Logger) Debug(msg string, ctx string) {
@@ -141,6 +143,10 @@ func (l *Logger) Debugf(format string, input ...interface{}) {
 
 	fmt.Printf(format, aurora.BrightBlue(msg))
 }
+
+// #endregion Debug
+
+// #region Info
 
 // Outputs a message to the console using the INFO log level, fmt.Println, and coloring the
 // output cyan.
@@ -160,6 +166,10 @@ func (l *Logger) Infof(format string, input ...interface{}) {
 	fmt.Printf(format, aurora.Cyan(msg))
 }
 
+// #endregion Info
+
+// #region Warn
+
 // Outputs a message to the console using the WARN log level, fmt.Println, and coloring the
 // output bright yellow.
 func (l *Logger) Warn(msg string, ctx string) {
@@ -177,6 +187,10 @@ func (l *Logger) Warnf(format string, input ...interface{}) {
 
 	fmt.Printf(format, aurora.BrightYellow(msg))
 }
+
+// #endregion Warn
+
+// #region Error
 
 // Outputs a message to the console using the ERROR log level, fmt.Println, and coloring the
 // output bright red.
@@ -196,6 +210,10 @@ func (l *Logger) Errorf(format string, input ...interface{}) {
 	fmt.Printf(format, aurora.BrightRed(msg))
 }
 
+// #endregion Error
+
+// #region Fatal
+
 // Outputs a message to the console using the FATAL log level, fmt.Println, and coloring the
 // output bright red.
 func (l *Logger) Fatal(msg string, ctx string) {
@@ -214,6 +232,10 @@ func (l *Logger) Fatalf(format string, input ...interface{}) {
 	fmt.Printf(format, aurora.BrightRed(msg))
 }
 
+// #endregion Fatal
+
+// #region Success
+
 // Outputs a message to the console using fmt.Println, and coloring the output bright green.
 func (l *Logger) Success(msg string, ctx string) {
 	logPrefix := "[" + l.AppName + "-SUCCESS#" + l.getCtx(ctx) + "]: "
@@ -227,3 +249,7 @@ func (l *Logger) Successf(format string, input ...interface{}) {
 
 	fmt.Printf(format, aurora.BrightGreen(msg))
 }
+
+// #endregion Success
+
+// #endregion Exported
