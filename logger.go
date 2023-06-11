@@ -6,20 +6,25 @@ import (
 	"github.com/logrusorgru/aurora/v4"
 )
 
-// This struct represents an instance of the logger.
-type Logger struct {
-	// 0 = DEBUG; 1 = INFO; 2 = WARN; 3 = ERROR; 4 = FATAL
-	LogLevel int
+type (
+	NewLoggerInput struct {
+		// The name of the application using the logger.
+		AppName *string
 
-	// The name of the application using the logger.
-	AppName string
-}
+		// 0 = DEBUG; 1 = INFO; 2 = WARN; 3 = ERROR; 4 = FATAL
+		LogLevel *int
+	}
 
-// The struct used to create a new instance of the Logger struct.
-type NewLoggerInput struct {
-	AppName  *string
-	LogLevel *int
-}
+	Logger struct {
+		// The name of the application using the logger.
+		AppName string
+
+		// 0 = DEBUG; 1 = INFO; 2 = WARN; 3 = ERROR; 4 = FATAL
+		LogLevel int
+	}
+)
+
+// #region Internals
 
 // The default value to use for the app name property of the logger if a value is not provided.
 var defaultAppName = "Glogger"
@@ -31,41 +36,53 @@ var defaultLogLevel = 0
 // returned.
 func (l *Logger) getCtx(ctx string) string {
 	if ctx == "" {
-		return "Glogger"
-	} else {
-		return ctx
-	}
-}
-
-// Converts the log level from an int to a string.
-func (l *Logger) logLevelToStr(logLevel *int) string {
-	if logLevel == nil {
-		logLevel = &l.LogLevel
+		return defaultAppName
 	}
 
-	switch *logLevel {
-	case 0:
-		return "DEBUG"
-	case 1:
-		return "INFO"
-	case 2:
-		return "WARN"
-	case 3:
-		return "ERROR"
-	case 4:
-		return "FATAL"
-
-	default:
-		return "DEBUG"
-	}
+	return ctx
 }
 
 // Gets the log prefix for the log message.
 func (l *Logger) getLogPrefix(logLevel *int, ctx string) string {
-	return "[" + l.AppName + "-" + l.logLevelToStr(logLevel) + "#" + l.getCtx(ctx) + "]: "
+	if logLevel == nil {
+		logLevel = &l.LogLevel
+	}
+
+	return "[" + l.AppName + "-" + l.ConvertLogLevel(logLevel) + "#" + l.getCtx(ctx) + "]: "
 }
 
-// Creates a new instance of the Logger struct. Parameters:
+// #endregion Internals
+
+// #region Exported
+
+// A map of log levels with the key as a string of the log level name or the log level number.
+// This means that the following are valid keys:
+//
+// - "DEBUG" | "0"
+//
+// - "INFO" | "1"
+//
+// - "WARNING" | "2"
+//
+// - "ERROR" | "3"
+//
+// - "FATAL" | "4"
+var LogLevels = map[string]string{
+	"DEBUG":   "0",
+	"INFO":    "1",
+	"WARNING": "2",
+	"ERROR":   "3",
+	"FATAL":   "4",
+	"0":       "DEBUG",
+	"1":       "INFO",
+	"2":       "WARNING",
+	"3":       "ERROR",
+	"4":       "FATAL",
+}
+
+// Creates a new instance of the Logger.
+//
+// Parameters:
 //
 // - appName: The name of the application using the logger. If nil, the default value is "Glogger".
 //
@@ -86,6 +103,26 @@ func NewLogger(loggerInput *NewLoggerInput) *Logger {
 		LogLevel: *logLevel,
 		AppName:  *appName,
 	}
+}
+
+// Converts a given log level from an int to a string or from a number as a string to a log level
+// name. For example: "0" -> "DEBUG" or "DEBUG" -> "0".
+//
+// If the log level is a string then it is used as is as the  map key. If the log level is an int
+// then it is converted to a string and used as the map key. If none of the above return a value
+// then the LogLevel property of the Logger is used as the map key.
+func (l *Logger) ConvertLogLevel(level interface{}) string {
+	switch v := level.(type) {
+	// If the log level is a string then use it as is as the map key.
+	case string:
+		return LogLevels[v]
+	// If the log level is an int then convert it to a string and use it as the map key.
+	case int:
+		return LogLevels[fmt.Sprintf("%d", v)]
+	}
+
+	// If none of the above return a value then try the LogLevel property of the Logger as a map key.
+	return LogLevels[fmt.Sprintf("%d", l.LogLevel)]
 }
 
 // Outputs a message to the console using the DEBUG log level, fmt.Println, and coloring the
