@@ -2,6 +2,8 @@ package glogger
 
 import (
 	"fmt"
+	"path"
+	"runtime"
 
 	"github.com/logrusorgru/aurora/v4"
 )
@@ -59,16 +61,16 @@ var defaultLogLevel = 0
 
 // Get the context for the log message. If the context is empty, the default value of "Glogger" is
 // returned.
-func (l *Logger) getCtx(ctx string) string {
-	if ctx == "" {
+func (l *Logger) getCtx(ctx *string) string {
+	if ctx == nil {
 		return defaultAppName
 	}
 
-	return ctx
+	return *ctx
 }
 
 // Gets the log prefix for the log message.
-func (l *Logger) getLogPrefix(logLevel *int, ctx string) string {
+func (l *Logger) getLogPrefix(logLevel *int, ctx *string) string {
 	if logLevel == nil {
 		logLevel = &l.LogLevel
 	}
@@ -105,6 +107,11 @@ func NewLogger(loggerInput *NewLoggerInput) *Logger {
 	}
 }
 
+// An alias for the NewLogger function.
+func New(loggerInput *NewLoggerInput) *Logger {
+	return NewLogger(loggerInput)
+}
+
 // Converts a given log level from an int to a string or from a number as a string to a log level
 // name. For example: "0" -> "DEBUG" or "DEBUG" -> "0".
 //
@@ -125,11 +132,23 @@ func (l *Logger) ConvertLogLevel(level interface{}) string {
 	return logLevels[fmt.Sprintf("%d", l.LogLevel)]
 }
 
+func GetCallingFunctionName() string {
+	pc, _, _, _ := runtime.Caller(3)
+	funcName := runtime.FuncForPC(pc).Name()
+
+	return path.Base(funcName)
+}
+
 // #region Debug
 
 // Outputs a message to the console using the DEBUG log level, fmt.Println, and coloring the
 // output bright blue.
-func (l *Logger) Debug(msg string, ctx string) {
+func (l *Logger) Debug(msg string, ctx *string) {
+	if ctx == nil {
+		funcName := GetCallingFunctionName()
+		ctx = &funcName
+	}
+
 	if l.LogLevel == 0 {
 		logPrefix := l.getLogPrefix(&l.LogLevel, ctx)
 		fmt.Println(aurora.BrightBlue(logPrefix + msg))
@@ -150,7 +169,12 @@ func (l *Logger) Debugf(format string, input ...interface{}) {
 
 // Outputs a message to the console using the INFO log level, fmt.Println, and coloring the
 // output cyan.
-func (l *Logger) Info(msg string, ctx string) {
+func (l *Logger) Info(msg string, ctx *string) {
+	if ctx == nil {
+		funcName := GetCallingFunctionName()
+		ctx = &funcName
+	}
+
 	if l.LogLevel <= 1 {
 		logLevel := 1
 		logPrefix := l.getLogPrefix(&logLevel, ctx)
@@ -172,7 +196,12 @@ func (l *Logger) Infof(format string, input ...interface{}) {
 
 // Outputs a message to the console using the WARN log level, fmt.Println, and coloring the
 // output bright yellow.
-func (l *Logger) Warn(msg string, ctx string) {
+func (l *Logger) Warn(msg string, ctx *string) {
+	if ctx == nil {
+		funcName := GetCallingFunctionName()
+		ctx = &funcName
+	}
+
 	if l.LogLevel <= 2 {
 		logLevel := 2
 		logPrefix := l.getLogPrefix(&logLevel, ctx)
@@ -194,7 +223,12 @@ func (l *Logger) Warnf(format string, input ...interface{}) {
 
 // Outputs a message to the console using the ERROR log level, fmt.Println, and coloring the
 // output bright red.
-func (l *Logger) Error(msg string, ctx string) {
+func (l *Logger) Error(msg string, ctx *string) {
+	if ctx == nil {
+		funcName := GetCallingFunctionName()
+		ctx = &funcName
+	}
+
 	if l.LogLevel <= 3 {
 		logLevel := 3
 		logPrefix := l.getLogPrefix(&logLevel, ctx)
@@ -216,7 +250,12 @@ func (l *Logger) Errorf(format string, input ...interface{}) {
 
 // Outputs a message to the console using the FATAL log level, fmt.Println, and coloring the
 // output bright red.
-func (l *Logger) Fatal(msg string, ctx string) {
+func (l *Logger) Fatal(msg string, ctx *string) {
+	if ctx == nil {
+		funcName := GetCallingFunctionName()
+		ctx = &funcName
+	}
+
 	if l.LogLevel <= 4 {
 		logLevel := 4
 		logPrefix := l.getLogPrefix(&logLevel, ctx)
@@ -237,7 +276,12 @@ func (l *Logger) Fatalf(format string, input ...interface{}) {
 // #region Success
 
 // Outputs a message to the console using fmt.Println, and coloring the output bright green.
-func (l *Logger) Success(msg string, ctx string) {
+func (l *Logger) Success(msg string, ctx *string) {
+	if ctx == nil {
+		funcName := GetCallingFunctionName()
+		ctx = &funcName
+	}
+
 	logPrefix := "[" + l.AppName + "-SUCCESS#" + l.getCtx(ctx) + "]: "
 	fmt.Println(aurora.BrightGreen(logPrefix + msg))
 }
