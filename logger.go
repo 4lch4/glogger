@@ -26,6 +26,31 @@ type (
 
 // #region Internals
 
+// A map of log levels with the key as a string of the log level name or the log level number.
+// This means that the following are valid keys:
+//
+// - "DEBUG" | "0"
+//
+// - "INFO" | "1"
+//
+// - "WARNING" | "2"
+//
+// - "ERROR" | "3"
+//
+// - "FATAL" | "4"
+var logLevels = map[string]string{
+	"DEBUG":   "0",
+	"INFO":    "1",
+	"WARNING": "2",
+	"ERROR":   "3",
+	"FATAL":   "4",
+	"0":       "DEBUG",
+	"1":       "INFO",
+	"2":       "WARNING",
+	"3":       "ERROR",
+	"4":       "FATAL",
+}
+
 // The default value to use for the app name property of the logger if a value is not provided.
 var defaultAppName = "Glogger"
 
@@ -54,31 +79,6 @@ func (l *Logger) getLogPrefix(logLevel *int, ctx string) string {
 // #endregion Internals
 
 // #region Exported
-
-// A map of log levels with the key as a string of the log level name or the log level number.
-// This means that the following are valid keys:
-//
-// - "DEBUG" | "0"
-//
-// - "INFO" | "1"
-//
-// - "WARNING" | "2"
-//
-// - "ERROR" | "3"
-//
-// - "FATAL" | "4"
-var LogLevels = map[string]string{
-	"DEBUG":   "0",
-	"INFO":    "1",
-	"WARNING": "2",
-	"ERROR":   "3",
-	"FATAL":   "4",
-	"0":       "DEBUG",
-	"1":       "INFO",
-	"2":       "WARNING",
-	"3":       "ERROR",
-	"4":       "FATAL",
-}
 
 // Creates a new instance of the Logger.
 //
@@ -115,14 +115,14 @@ func (l *Logger) ConvertLogLevel(level interface{}) string {
 	switch v := level.(type) {
 	// If the log level is a string then use it as is as the map key.
 	case string:
-		return LogLevels[v]
+		return logLevels[v]
 	// If the log level is an int then convert it to a string and use it as the map key.
 	case int:
-		return LogLevels[fmt.Sprintf("%d", v)]
+		return logLevels[fmt.Sprintf("%d", v)]
 	}
 
 	// If none of the above return a value then try the LogLevel property of the Logger as a map key.
-	return LogLevels[fmt.Sprintf("%d", l.LogLevel)]
+	return logLevels[fmt.Sprintf("%d", l.LogLevel)]
 }
 
 // #region Debug
